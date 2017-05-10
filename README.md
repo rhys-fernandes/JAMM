@@ -34,13 +34,13 @@ Keys. Make sure you have also installed dependencies from the **requirements
 ### Screenshots
 
 Launcher:<br>
-    ![alt text](screenshots/launcher.png)
+    ![launcher](screenshots/launcher.png)
     
 Dashboard Forecasts:<br>
-    ![alt text](screenshots/main.png)
+    ![main](screenshots/main.png)
     
 Dashboard News:<br>
-    ![alt text](screenshots/news.png)    
+    ![news](screenshots/news.png)    
     
 ### Credits
 

@@ -10,7 +10,7 @@ them to your smartphone or tablet.
 The dashboard was originally intended to be used with a RaspberryPi and runs
  at 1024x600 resolution.
  
-### Requirements/Installation
+### Requirements/Configuration
 
 + Open Weather Maps
 

@@ -41,3 +41,12 @@ Dashboard Forecasts:<br>
     
 Dashboard News:<br>
     ![alt text](screenshots/news.png)    
+    
+### Credits
+
+Icons used  from <http://websygen.github.io/owfont/> created by [Deniz 
+Fuchidzhiev](http://websygen.com/)
+
+### Authors 
+
+Developed and maintained by [Rhys Fernandes](https://github.com/rhys-fernandes)

@@ -87,7 +87,7 @@ class Dashboard:
         self.master = master
         self.master.geometry("1024x600")
         self.master.title(self.weather.raw_weather_data["name"])
-        self.master.resizable(True, True)
+        self.master.resizable(False, False)
         # For enabling/disabling window decorations
         self.master.overrideredirect(False)
         self.master.configure(background="black")

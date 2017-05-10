@@ -30,3 +30,14 @@ The dashboard was originally intended to be used with a RaspberryPi and runs
 Once you have both of these, edit the **config.ini** file to include the Api 
 Keys. Make sure you have also installed dependencies from the **requirements
 .txt** file.
+
+###Screenshots
+
+Launcher:<br>
+    ![alt text](screenshots/launcher.png)
+    
+Dashboard Forecasts:<br>
+    ![alt text](screenshots/main.png)
+    
+Dashboard News:<br>
+    ![alt text](screenshots/news.png)    

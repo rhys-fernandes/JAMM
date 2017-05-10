@@ -37,7 +37,7 @@ Launcher:<br>
     ![launcher](screenshots/launcher.png)
     
 Dashboard Forecasts:<br>
-    ![main](screenshots/main.png)
+    ![forecast](screenshots/main.png)
     
 Dashboard News:<br>
     ![news](screenshots/news.png)    

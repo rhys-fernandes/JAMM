@@ -196,14 +196,14 @@ class Dashboard:
         self.current_day_label.grid(row=0, column=1, sticky="s")
         self.current_date_label.grid(row=1, column=1, sticky="n")
 
-        # ---- MIDDLE FRAME ----
+        # ---- Button Frame ----
 
         self.middle_frame = ttk.Frame(master,
                                       style="F.TFrame",
                                       height=600,
                                       width=50)
 
-        self.middle_frame.grid(row=0, column=1, sticky="e")
+        self.middle_frame.grid(row=0, column=2, sticky="e")
 
         # buttons for switching between forecast and news tab
 
@@ -216,7 +216,9 @@ class Dashboard:
                   activeforeground="#00FFFF",
                   activebackground="black",
                   font=("Roboto", 16, "bold"),
-                  command=self.call_forecast).grid(row=0, pady=10, sticky="e")
+                  command=self.call_forecast).grid(row=0,
+                                                   pady=10,
+                                                   sticky="nesw")
 
         tk.Button(self.middle_frame,
                   text="☶",
@@ -242,16 +244,14 @@ class Dashboard:
         #           font=("Segoe UI Light", 16),
         #           command=None).grid(row=0, padx=5, pady=5)
 
-        # ---- RIGHT FRAME ----
+        # ---- Content Frame ----
 
         self.right_frame = ttk.Frame(master,
                                      style="F.TFrame",
                                      height=600,
                                      width=524)
 
-        self.right_frame.grid(row=0,
-                              column=2,
-                              sticky="e")
+        self.right_frame.grid(row=0, column=1, sticky="e")
 
         self.right_frame.columnconfigure(0, minsize=524)
 
@@ -267,7 +267,7 @@ class Dashboard:
         for days in range(0, 3):
             day = ttk.Label(self.forecast_tab,
                             style="L.TLabel")
-            day.grid(row=days, column=0, padx=60, pady=60, sticky="e")
+            day.grid(row=days, column=0, padx=60, pady=60, sticky="w")
             self.day_labels.append(day)
 
             icon = ttk.Label(self.forecast_tab,

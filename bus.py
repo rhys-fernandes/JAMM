@@ -1,28 +1,24 @@
 from bs4 import BeautifulSoup
 from requests import get
 
+
 class BusTime:
 
     def __init__(self, items):
-        self.page = get(
-        "http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47297")
-        self.soup = BeautifulSoup(self.page.content, "html.parser")
         self.no_of_times = items
-        self.bus_times_dict = {}
-        self.service = []
-        self.bus_times = []
+        self.bus_data = {}
         self.get_bus_times()
 
     def get_bus_times(self):
 
-        for i in self.soup.find_all("td", "colServiceName"):
-            self.service.append(i.contents[0])
+        # self.bus_times_dict.clear()
+        page = get(
+        "http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47297")
+        soup = BeautifulSoup(page.content, "html.parser")
 
-        for i in self.soup.find_all("td", "colDepartureTime"):
-            self.bus_times.append(i.contents[0])
+        service = [x.contents[0] for x in soup.find_all("td", "colServiceName")]
+        bus_times = [x.contents[0] for x in soup.find_all("td", "colDepartureTime")]
 
-        for e in range(self.no_of_times):
-            self.bus_times_dict[e] = self.service[e], self.bus_times[e]
+        self.bus_data = {i: (service[i], bus_times[i]) for i in range(self.no_of_times)}
 
-        return self.bus_times_dict
-
+        return self.bus_data

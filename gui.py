@@ -18,7 +18,7 @@ class DashboardLauncher:
     def __init__(self, master):
         self.master = master
         self.master.title("Welcome to Dashboard")
-        self.master.geometry("350x55+200+200")
+        self.master.geometry("380x55+200+200")
         self.master.resizable(False, False)
 
         self.dashboard_window = None
@@ -90,7 +90,7 @@ class Dashboard:
         self.master.title(self.weather.raw_weather_data["name"])
         self.master.resizable(False, False)
         # For enabling/disabling window decorations
-        self.master.overrideredirect(True)
+        self.master.overrideredirect(False)
         self.master.configure(background="black")
 
         # variables for weather data that is to be displayed
@@ -184,7 +184,7 @@ class Dashboard:
 
         self.current_time_label = ttk.Label(self.date_time_frame,
                                             style="L.TLabel",
-                                            font=("Roboto", 52),
+                                            font=("Roboto", 47),
                                             textvariable=self.current_time)
 
         self.current_date_label = ttk.Label(self.date_time_frame,
@@ -449,12 +449,12 @@ class Dashboard:
         for s_labels in self.service_labels:
             counter = self.service_labels.index(s_labels)
             s_labels.config(
-                text=self.bus_data.bus_times_dict[counter][0])
+                text=self.bus_data.bus_data[counter][0])
 
         for t_labels in self.bus_time_labels:
             counter = self.bus_time_labels.index(t_labels)
             t_labels.config(
-                text=self.bus_data.bus_times_dict[counter][1])
+                text=self.bus_data.bus_data[counter][1])
 
         self.bus_tab.after(60000, self.update_bus)
 

@@ -5,7 +5,7 @@ class BusTime:
 
     def __init__(self, items):
         self.page = get(
-        "http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=ENTER_STOPID_HERE")
+        "http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47297")
         self.soup = BeautifulSoup(self.page.content, "html.parser")
         self.no_of_times = items
         self.bus_times_dict = {}

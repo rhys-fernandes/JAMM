@@ -18,13 +18,13 @@ class Weather(object):
         # noinspection PyPep8
         request_weather = requests.get(
             'http://api.openweathermap.org/data/2.5/weather?q=' +
-            self.location + '&units=metric' + self.api_id)
+            self.location + '&units=metric&appid=' + self.api_id)
         self.raw_weather_data = request_weather.json()
 
         # noinspection PyPep8
         request_forecast = requests.get(
             'http://api.openweathermap.org/data/2.5/forecast?q=' +
-            self.location + '&units=metric' + self.api_id)
+            self.location + '&units=metric&appid=' + self.api_id)
         self.raw_forecast_data = request_forecast.json()
 
         # threading.Timer(5400, self.request_data).start() # independent use
@@ -86,5 +86,5 @@ class Weather(object):
         return s_m_data[i]
 
 
-        # london = Weather("London")
-        # london.get_weather("description")
+# london = Weather("London")
+# london.get_weather("description")

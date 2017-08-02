@@ -4,6 +4,7 @@ import tkinter as tk
 from datetime import datetime, timedelta
 from tkinter import messagebox
 from tkinter import ttk
+from bus import BusTime
 
 import push_bullet as pb
 import weather
@@ -89,7 +90,7 @@ class Dashboard:
         self.master.title(self.weather.raw_weather_data["name"])
         self.master.resizable(False, False)
         # For enabling/disabling window decorations
-        self.master.overrideredirect(False)
+        self.master.overrideredirect(True)
         self.master.configure(background="black")
 
         # variables for weather data that is to be displayed
@@ -113,6 +114,10 @@ class Dashboard:
         # r/subreddit, 2nd argument = number of stories to scrape
         self.news_data = SubScraper("worldnews", 5)
         self.story_labels = []
+
+        self.bus_data = BusTime(3)
+        self.service_labels = []
+        self.bus_time_labels = []
 
         # Styling Stuff
         l_style = ttk.Style()
@@ -184,12 +189,12 @@ class Dashboard:
 
         self.current_date_label = ttk.Label(self.date_time_frame,
                                             style="L.TLabel",
-                                            font=("Roboto", 20),
+                                            font=("Roboto", 15),
                                             textvariable=self.current_date)
 
         self.current_day_label = ttk.Label(self.date_time_frame,
                                            style="L.TLabel",
-                                           font=("Roboto", 20),
+                                           font=("Roboto", 15),
                                            textvariable=self.current_day)
 
         self.current_time_label.grid(rowspan=2, padx=20, sticky="w")
@@ -198,16 +203,16 @@ class Dashboard:
 
         # ---- Button Frame ----
 
-        self.middle_frame = ttk.Frame(master,
+        self.button_frame = ttk.Frame(master,
                                       style="F.TFrame",
                                       height=600,
                                       width=50)
 
-        self.middle_frame.grid(row=0, column=2, sticky="e")
+        self.button_frame.grid(row=0, column=2, sticky="e")
 
         # buttons for switching between forecast and news tab
 
-        tk.Button(self.middle_frame,
+        tk.Button(self.button_frame,
                   text="°C",
                   foreground="white",
                   background="black",
@@ -220,7 +225,7 @@ class Dashboard:
                                                    pady=10,
                                                    sticky="nesw")
 
-        tk.Button(self.middle_frame,
+        tk.Button(self.button_frame,
                   text="☶",
                   foreground="white",
                   background="black",
@@ -231,6 +236,18 @@ class Dashboard:
                   font=("Roboto", 16),
                   command=self.call_news
                   ).grid(row=1, pady=10, sticky="e")
+
+        tk.Button(self.button_frame,
+                  text="⏲",
+                  foreground="white",
+                  background="black",
+                  bd=0,
+                  highlightthickness=0,
+                  activeforeground="#00FFFF",
+                  activebackground="black",
+                  font=("Roboto", 16),
+                  command=self.call_times
+                  ).grid(row=2, pady=10, sticky="e")
 
         # Undecided Button for additional tab/features
 
@@ -301,18 +318,37 @@ class Dashboard:
                               background="black",
                               activeforeground="#00FFFF",
                               activebackground="black",
-                              font=("Roboto", 12))
+                              font=("Roboto", 11))
 
             self.story_labels.append(story)
             story.grid(row=stories, column=0, pady=25, sticky="w")
 
         self.news_tab.grid(sticky="nes")
 
+
+
+        self.bus_tab = ttk.Frame(self.right_frame,
+                                  style="F.TFrame",
+                                  height=600)
+
+        for b_times in range(self.bus_data.no_of_times):
+            service = ttk.Label(self.bus_tab,style="L.TLabel")
+            service.grid(row=b_times, column=0, padx=60, pady=87, sticky="w")
+            self.service_labels.append(service)
+
+            b_time = ttk.Label(self.bus_tab,style="L.TLabel")
+            b_time.grid(row=b_times, column=1, padx=60, pady=87, sticky="w")
+            self.bus_time_labels.append(b_time)
+
+        self.bus_tab.grid(sticky="es")
+
         self.update_date_time()  # function keeps date_time frame updated
         self.update_weather()  # function keeps weather updated
         self.update_forecast()  # function keeps forecast updated
         self.update_news()  # function keeps news updated
+        self.update_bus()
         self.call_forecast()  # gui defaults to forecast
+
 
     def update_date_time(self):
         """
@@ -407,12 +443,30 @@ class Dashboard:
 
         self.news_tab.after(1800000, self.update_news)
 
+    def update_bus(self):
+        self.bus_data.get_bus_times()
+
+        for s_labels in self.service_labels:
+            counter = self.service_labels.index(s_labels)
+            s_labels.config(
+                text=self.bus_data.bus_times_dict[counter][0])
+
+        for t_labels in self.bus_time_labels:
+            counter = self.bus_time_labels.index(t_labels)
+            t_labels.config(
+                text=self.bus_data.bus_times_dict[counter][1])
+
+        self.bus_tab.after(60000, self.update_bus)
+
+
+
     def call_forecast(self):
         """
         
         :return: hides the news frame and shows the forecast frame
         """
         self.news_tab.grid_remove()
+        self.bus_tab.grid_remove()
         self.forecast_tab.grid()
 
     def call_news(self):
@@ -421,7 +475,17 @@ class Dashboard:
         :return: hides the forecast frame and shows the news frame
         """
         self.forecast_tab.grid_remove()
+        self.bus_tab.grid_remove()
         self.news_tab.grid()
+
+    def call_times(self):
+        """
+
+        :return: hides the forecast frame and shows the news frame
+        """
+        self.forecast_tab.grid_remove()
+        self.news_tab.grid_remove()
+        self.bus_tab.grid()
 
     @staticmethod
     def push(item):

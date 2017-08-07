@@ -520,6 +520,10 @@ class Dashboard:
         self.bus_tab.grid()
 
     def news_search(self):
+        """
+
+        :return: searches news article and sends pushes to users phone
+        """
         try:
             query = self.j_data.values()[0][2]["value"]
             for i in enumerate(self.news_data.data):
@@ -530,6 +534,10 @@ class Dashboard:
             pass
 
     def hot_word(self):
+        """
+
+        :return: listens for hotword "mirror". Then listens for command via listen()
+        """
 
         detector = snowboydecoder.HotwordDetector(self.model, sensitivity=0.5)
         print('Listening for Hotword')
@@ -541,6 +549,10 @@ class Dashboard:
         detector.terminate()
 
     def listen(self):
+        """
+
+        :return: listens for voice command
+        """
         self.play_audio_file()
         with sr.Microphone() as source:
             trys = 10
@@ -564,6 +576,10 @@ class Dashboard:
             print('Listening for Hotword')
 
     def switch(self, x):
+        """
+
+        :return: calls function based on voice command
+        """
         print x
         switch = {"on": self.wol,
                   "news": self.call_news,
@@ -574,6 +590,10 @@ class Dashboard:
         return switch.get(x)()
 
     def context(self, data):
+        """
+
+        :return: makes sense of the voice command
+        """
         try:
             for k, v in data.iteritems():
                 self.switch(v[0]["value"])

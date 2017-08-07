@@ -1,5 +1,11 @@
 pushbullet.py==0.10.0
 python-magic==0.4.13
-requests==2.13.0
 six==1.10.0
 websocket-client==0.40.0
+blessings==1.6
+PyAudio==0.2.11
+requests==2.14.2
+SpeechRecognition==3.6.5
+wakeonlan==0.2.2
+wit==4.2.0
+

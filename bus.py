@@ -10,8 +10,7 @@ class BusTime:
         self.get_bus_times()
 
     def get_bus_times(self):
-
-        # self.bus_times_dict.clear()
+        self.bus_data.clear()
         page = get(
         "http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47297")
         soup = BeautifulSoup(page.content, "html.parser")

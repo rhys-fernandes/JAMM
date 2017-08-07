@@ -1,6 +1,7 @@
+# coding=utf-8
 import requests
 import datetime as dt
-from configparser import ConfigParser
+from ConfigParser import ConfigParser
 
 
 class Weather(object):
@@ -8,7 +9,7 @@ class Weather(object):
         __config = ConfigParser()
         __config.read("config.ini")
 
-        self.api_id = __config["ApiKeys"]["owm"]
+        self.api_id = __config.get("ApiKeys", "owm")
         self.location = location
         self.raw_weather_data = {}
         self.raw_forecast_data = {}

@@ -1,10 +1,11 @@
 from pushbullet import Pushbullet
-from configparser import ConfigParser
+from ConfigParser import ConfigParser
 
 __config = ConfigParser()
 __config.read("config.ini")
 
-api_key = __config["ApiKeys"]["pushbullet"]
+
+api_key = __config.get("ApiKeys", "pushbullet")
 pb = Pushbullet(api_key)
 
 

@@ -1,13 +1,26 @@
+# coding=utf-8
 """A simple Dashboard gui for displaying the Time, Weather and News"""
 
-import tkinter as tk
+import Tkinter as tk
+import signal
+import threading
+import tkMessageBox as messagebox
+import ttk
+import wave
+from ConfigParser import ConfigParser
 from datetime import datetime, timedelta
-from tkinter import messagebox
-from tkinter import ttk
-from bus import BusTime
+from time import sleep
+
+import pyaudio
+import speech_recognition as sr
+from wakeonlan import wol
+from wit import Wit
+from wit.wit import WitError
 
 import push_bullet as pb
+import snowboydecoder
 import weather
+from bus import BusTime
 from subreddit_scraper import SubScraper
 
 
@@ -83,6 +96,25 @@ class Dashboard:
         :param master:  Dashboards parent obj
         :param location: User input location 
         """
+
+        __config = ConfigParser()
+        __config.read("config.ini")
+
+        self.api = Wit(access_token=__config.get("ApiKeys", "access_token"))
+        self.interrupted = False
+
+        self.rec = sr.Recognizer()
+        self.rec.pause_threshold = 0.5
+        self.audio = None
+        self.audio_as_txt = None
+        self.j_data = None
+        self.model = "snowboy.pmdl"
+
+        with sr.Microphone() as source:
+            print("calibrating")
+            self.rec.adjust_for_ambient_noise(source, duration=5)
+            print("calibration complete")
+
         self.weather = weather.Weather(location)
 
         self.master = master
@@ -325,18 +357,16 @@ class Dashboard:
 
         self.news_tab.grid(sticky="nes")
 
-
-
         self.bus_tab = ttk.Frame(self.right_frame,
-                                  style="F.TFrame",
-                                  height=600)
+                                 style="F.TFrame",
+                                 height=600)
 
         for b_times in range(self.bus_data.no_of_times):
-            service = ttk.Label(self.bus_tab,style="L.TLabel")
+            service = ttk.Label(self.bus_tab, style="L.TLabel")
             service.grid(row=b_times, column=0, padx=60, pady=87, sticky="w")
             self.service_labels.append(service)
 
-            b_time = ttk.Label(self.bus_tab,style="L.TLabel")
+            b_time = ttk.Label(self.bus_tab, style="L.TLabel")
             b_time.grid(row=b_times, column=1, padx=60, pady=87, sticky="w")
             self.bus_time_labels.append(b_time)
 
@@ -349,6 +379,10 @@ class Dashboard:
         self.update_bus()
         self.call_forecast()  # gui defaults to forecast
 
+        signal.signal(signal.SIGINT, self.signal_handler)
+
+        self.t1 = threading.Thread(target=self.hot_word)
+        self.t1.start()
 
     def update_date_time(self):
         """
@@ -458,8 +492,6 @@ class Dashboard:
 
         self.bus_tab.after(60000, self.update_bus)
 
-
-
     def call_forecast(self):
         """
         
@@ -486,6 +518,99 @@ class Dashboard:
         self.forecast_tab.grid_remove()
         self.news_tab.grid_remove()
         self.bus_tab.grid()
+
+    def news_search(self):
+        try:
+            query = self.j_data.values()[0][2]["value"]
+            for i in enumerate(self.news_data.data):
+                if query in i[1][0].lower():
+                    self.push(self.news_data.data[i[0]])
+        except IndexError as error:
+            print error
+            pass
+
+    def hot_word(self):
+
+        detector = snowboydecoder.HotwordDetector(self.model, sensitivity=0.5)
+        print('Listening for Hotword')
+
+        detector.start(detected_callback=self.listen,
+                       interrupt_check=self.interrupt_callback,
+                       sleep_time=0.03)
+
+        detector.terminate()
+
+    def listen(self):
+        self.play_audio_file()
+        with sr.Microphone() as source:
+            trys = 10
+            while trys > 0:
+                try:
+                    print("listening")
+                    trys -= 1
+                    self.audio = self.rec.listen(source, timeout=0.5)
+                    self.audio_as_txt = self.rec.recognize_wit(self.audio,
+                                                               key=self.api.access_token)
+                    try:
+                        self.j_data = self.api.message(self.audio_as_txt)[
+                            "entities"]
+                        print("Response: {}".format(self.j_data))
+                        self.context(self.j_data)
+                    except WitError:
+                        print("Bad Request")
+                        pass
+                except sr.WaitTimeoutError:
+                    pass
+            print('Listening for Hotword')
+
+    def switch(self, x):
+        print x
+        switch = {"on": self.wol,
+                  "news": self.call_news,
+                  "forecast": self.call_forecast,
+                  "bus": self.call_times,
+                  "link": self.news_search}
+
+        return switch.get(x)()
+
+    def context(self, data):
+        try:
+            for k, v in data.iteritems():
+                self.switch(v[0]["value"])
+
+        except (IndexError, TypeError) as error:
+            print error
+            pass
+
+    def wol(self):
+        print("WOL Sent")
+        wol.send_magic_packet('90-2B-34-59-37-73')
+
+    def signal_handler(self, signal, frame):
+        self.interrupted = True
+
+    def interrupt_callback(self):
+        return self.interrupted
+
+
+    @staticmethod
+    def play_audio_file():
+        """Simple callback function to play a wave file. By default it plays
+        a Ding sound.
+        """
+        ding_wav = wave.open('resources/ding.wav', "rb")
+        ding_data = ding_wav.readframes(ding_wav.getnframes())
+        audio = pyaudio.PyAudio()
+        stream_out = audio.open(
+            format=audio.get_format_from_width(ding_wav.getsampwidth()),
+            channels=ding_wav.getnchannels(),
+            rate=ding_wav.getframerate(), input=False, output=True)
+        stream_out.start_stream()
+        stream_out.write(ding_data)
+        sleep(0.2)
+        stream_out.stop_stream()
+        stream_out.close()
+        audio.terminate()
 
     @staticmethod
     def push(item):

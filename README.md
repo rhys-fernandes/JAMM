@@ -7,6 +7,8 @@ news stories.<br/>
 Clicking or touching individual news stories pushes (pushbullet required) 
 them to your smartphone or tablet.
 
+See It In Action [HERE](https://youtu.be/DN3IyIRNeEo)
+
 The dashboard was originally intended to be used with a RaspberryPi and runs
  at 1024x600 resolution.
  

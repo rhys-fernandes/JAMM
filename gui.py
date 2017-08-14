@@ -147,7 +147,8 @@ class Dashboard:
         self.news_data = SubScraper("worldnews", 5)
         self.story_labels = []
 
-        self.bus_data = BusTime(3)
+        self.bus_data = BusTime(items=3,
+                                site="http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47297")
         self.service_labels = []
         self.bus_time_labels = []
 
@@ -555,11 +556,11 @@ class Dashboard:
         """
         self.play_audio_file()
         with sr.Microphone() as source:
-            trys = 10
-            while trys > 0:
+            tries = 5
+            while tries > 0:
                 try:
                     print("listening")
-                    trys -= 1
+                    tries -= 1
                     self.audio = self.rec.listen(source, timeout=0.5)
                     self.audio_as_txt = self.rec.recognize_wit(self.audio,
                                                                key=self.api.access_token)
@@ -571,7 +572,7 @@ class Dashboard:
                     except WitError:
                         print("Bad Request")
                         pass
-                except sr.WaitTimeoutError:
+                except (sr.WaitTimeoutError, sr.RequestError):
                     pass
             print('Listening for Hotword')
 

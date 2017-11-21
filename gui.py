@@ -148,7 +148,7 @@ class Dashboard:
         self.story_labels = []
 
         self.bus_data = BusTime(items=3,
-                                site="http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47297")
+                                site="http://www.buscms.com/thamesdown/operatorpages/mobilesite/stop.aspx?stopid=47294")
         self.service_labels = []
         self.bus_time_labels = []
 
@@ -605,7 +605,7 @@ class Dashboard:
 
     def wol(self):
         print("WOL Sent")
-        wol.send_magic_packet('90-2B-34-59-37-73')
+        wol.send_magic_packet('MAC ADDRESS')
 
     def signal_handler(self, signal, frame):
         self.interrupted = True
